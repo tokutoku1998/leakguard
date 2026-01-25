@@ -1,0 +1,19 @@
+{
+    "name":  "leakguard",
+    "private":  true,
+    "workspaces":  [
+                       "extension",
+                       "server"
+                   ],
+    "scripts":  {
+                    "lint":  "npm -w extension run lint \u0026\u0026 npm -w server run lint",
+                    "test":  "npm -w extension test \u0026\u0026 npm -w server test",
+                    "build":  "npm -w extension run compile \u0026\u0026 npm -w server run build",
+                    "docker:smoke":  "node scripts/docker-smoke.mjs",
+                    "beta:proof":  "node scripts/gen-beta-proof.mjs --docker logs/docker-smoke.log --quickstart logs/quickstart.log --out beta-proof.txt",
+                    "beta:quickstart":  "node scripts/quickstart-headless.mjs"
+                },
+    "engines":  {
+                    "node":  "22.x"
+                }
+}

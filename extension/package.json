@@ -1,0 +1,86 @@
+{
+  "name": "leakguard-extension",
+  "displayName": "LeakGuard",
+  "description": "Prevent secret leaks in the editor",
+  "version": "0.1.0",
+  "publisher": "leakguard",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:leakguard.scanWorkspace",
+    "onCommand:leakguard.scanFile",
+    "onCommand:leakguard.connect",
+    "onCommand:leakguard.disconnect"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "leakguard.scanWorkspace", "title": "LeakGuard: Scan Workspace" },
+      { "command": "leakguard.scanFile", "title": "LeakGuard: Scan Current File" },
+      { "command": "leakguard.connect", "title": "LeakGuard: Connect" },
+      { "command": "leakguard.disconnect", "title": "LeakGuard: Disconnect" }
+    ],
+    "configuration": {
+      "title": "LeakGuard",
+      "properties": {
+        "leakguard.apiUrl": {
+          "type": "string",
+          "default": "",
+          "description": "API base URL. Leave empty to disable sending findings."
+        },
+        "leakguard.languages": {
+          "type": "array",
+          "default": [],
+          "items": { "type": "string" },
+          "description": "Language IDs to scan. Empty means all."
+        },
+        "leakguard.enableTelemetry": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt-in telemetry. Disabled by default."
+        },
+        "leakguard.enableHighEntropy": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable high-entropy generic detection (optional)."
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        { "id": "leakguard.summary", "name": "LeakGuard Summary" }
+      ]
+    },
+    "viewsContainers": {},
+    "menus": {
+      "explorer/context": [
+        { "command": "leakguard.scanFile", "group": "navigation" }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "lint": "eslint src --ext ts",
+    "test": "mocha -r ts-node/register test/**/*.test.ts",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.0",
+    "mocha": "^10.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "vsce": "^2.15.0",
+    "@types/mocha": "^10.0.6"
+  },
+  "dependencies": {
+    "ignore": "^5.3.1",
+    "node-fetch": "^3.3.2"
+  }
+}

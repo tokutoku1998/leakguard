@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
+
+  beta-proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Docker up
+        run: docker compose up --build -d
+      - name: Migrate deploy
+        run: docker compose run --rm migrate
+      - name: Docker smoke
+        run: npm run docker:smoke | tee logs/docker-smoke.log
+      - name: Headless quickstart
+        run: npm run beta:quickstart | tee logs/quickstart.log
+      - name: Generate beta proof
+        run: npm run beta:proof
+      - name: Upload beta proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: beta-proof
+          path: |
+            beta-proof.txt
+            logs/*
+      - name: Summary
+        if: always()
+        run: node scripts/beta-proof-summary.mjs beta-proof.txt logs/docker-smoke.log logs/quickstart.log >> $GITHUB_STEP_SUMMARY

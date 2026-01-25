@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    environment:
+      - DATABASE_URL=file:/app/server/dev.db
+      - PORT=3000
+      - LEAKGUARD_ADMIN_TOKEN=local-admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - leakguard-db:/app/server
+
+  migrate:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    environment:
+      - DATABASE_URL=file:/app/server/dev.db
+      - PRISMA_CLIENT_ENGINE_TYPE=binary
+      - PRISMA_CLI_QUERY_ENGINE_TYPE=binary
+    command: ["npm", "run", "prisma:migrate:deploy"]
+    volumes:
+      - leakguard-db:/app/server
+    depends_on:
+      - server
+
+volumes:
+  leakguard-db:

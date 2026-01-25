@@ -1,0 +1,41 @@
+{
+    "name":  "leakguard-server",
+    "version":  "0.1.0",
+    "private":  true,
+    "type":  "module",
+    "scripts":  {
+                    "dev":  "cross-env PRISMA_CLIENT_ENGINE_TYPE=binary PRISMA_CLI_QUERY_ENGINE_TYPE=binary npm run build \u0026\u0026 node dist/index.js",
+                    "build":  "tsc -p tsconfig.json",
+                    "start":  "node dist/index.js",
+                    "lint":  "eslint src --ext ts",
+                    "prisma:generate":  "cross-env PRISMA_CLIENT_ENGINE_TYPE=binary PRISMA_CLI_QUERY_ENGINE_TYPE=binary prisma generate --schema prisma/schema.prisma",
+                    "prisma:migrate":  "cross-env PRISMA_CLIENT_ENGINE_TYPE=binary PRISMA_CLI_QUERY_ENGINE_TYPE=binary prisma migrate deploy --schema prisma/schema.prisma",
+                    "test":  "npm run build \u0026\u0026 node --test test/**/*.test.js",
+                    "clean:prisma:windows":  "powershell -NoProfile -Command \"Remove-Item -Recurse -Force .\\\\node_modules\\\\.prisma, ..\\\\node_modules\\\\.prisma -ErrorAction SilentlyContinue; Remove-Item -Recurse -Force $env:LOCALAPPDATA\\\\Prisma, $env:USERPROFILE\\\\.cache\\\\prisma -ErrorAction SilentlyContinue\"",
+                    "leakguard":  "cross-env PRISMA_CLIENT_ENGINE_TYPE=binary PRISMA_CLI_QUERY_ENGINE_TYPE=binary node dist/cli.js",
+                    "prisma:migrate:dev":  "cross-env PRISMA_CLIENT_ENGINE_TYPE=binary PRISMA_CLI_QUERY_ENGINE_TYPE=binary prisma migrate dev --name init --schema prisma/schema.prisma",
+                    "prisma:migrate:deploy":  "cross-env PRISMA_CLIENT_ENGINE_TYPE=binary PRISMA_CLI_QUERY_ENGINE_TYPE=binary prisma migrate deploy --schema prisma/schema.prisma"
+                },
+    "dependencies":  {
+                         "@fastify/cors":  "^9.0.1",
+                         "@fastify/formbody":  "^7.4.0",
+                         "@fastify/rate-limit":  "^9.1.0",
+                         "@prisma/client":  "6.19.2",
+                         "fastify":  "^4.28.1",
+                         "zod":  "^3.23.8",
+                         "dotenv":  "^16.4.5"
+                     },
+    "devDependencies":  {
+                            "@types/node":  "^18.19.0",
+                            "@typescript-eslint/eslint-plugin":  "^7.8.0",
+                            "@typescript-eslint/parser":  "^7.8.0",
+                            "eslint":  "^8.57.0",
+                            "prisma":  "6.19.2",
+                            "ts-node":  "^10.9.2",
+                            "typescript":  "^5.4.5",
+                            "cross-env":  "^7.0.3"
+                        },
+    "bin":  {
+                "leakguard":  "dist/cli.js"
+            }
+}

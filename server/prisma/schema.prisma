@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Org {
+  id         String      @id
+  name       String
+  createdAt  DateTime    @default(now())
+  users      User[]
+  projects   Project[]
+  rules      Rule[]
+  auditLogs  AuditLog[]
+}
+
+model User {
+  id        String   @id
+  orgId     String
+  email     String
+  role      String
+  createdAt DateTime @default(now())
+  org       Org      @relation(fields: [orgId], references: [id])
+  findings  Finding[]
+  auditLogs AuditLog[]
+}
+
+model Project {
+  id        String   @id
+  orgId     String
+  repoId    String
+  name      String
+  ingestionTokenHash String? @unique
+  createdAt DateTime @default(now())
+  org       Org      @relation(fields: [orgId], references: [id])
+  findings  Finding[]
+
+  @@unique([orgId, repoId])
+}
+
+model Finding {
+  id            String   @id @default(cuid())
+  projectId     String
+  userId        String
+  type          String
+  file          String
+  line          Int
+  previewMasked String
+  fingerprint   String
+  status        String
+  firstSeenAt   DateTime
+  lastSeenAt    DateTime
+  createdAt     DateTime @default(now())
+  project       Project  @relation(fields: [projectId], references: [id])
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@index([projectId, type])
+  @@index([projectId, status])
+  @@unique([projectId, fingerprint])
+}
+
+model Rule {
+  id         String   @id @default(cuid())
+  orgId      String
+  name       String
+  enabled    Boolean  @default(true)
+  configJson String
+  createdAt  DateTime @default(now())
+  org        Org      @relation(fields: [orgId], references: [id])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  orgId      String
+  userId     String
+  action     String
+  payloadJson String
+  createdAt  DateTime @default(now())
+  org        Org      @relation(fields: [orgId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+}

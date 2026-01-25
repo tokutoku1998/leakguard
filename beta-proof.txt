@@ -1,0 +1,20 @@
+=== LeakGuard Beta Proof ===
+2026/01/23 23:32:15
+
+[origin] (not found)
+
+(2) Badge URL:
+https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg?branch=main
+
+(1) Actions run URL:
+Cannot auto-fetch run URL (need gh auth or GITHUB_TOKEN).
+
+(3) Docker smoke logs:
+
+docker not installed; smoke logs skipped
+
+(Quickstart: headless API verification)
+- healthz: HTTP ERR
+- token mint: FAILED (no token returned)
+
+=== END ===
